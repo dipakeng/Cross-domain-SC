@@ -38,7 +38,12 @@ def GWO(objf,lb,ub,dim,SearchAgents_no,Max_iter,trainInput,trainOutput,net):
 
     Worst_pos=numpy.zeros(dim)
     Worst_score=-float("inf")
-    
+
+    J4_pos=numpy.zeros(dim)
+    J4_score=-float("inf")
+
+    J5_pos=numpy.zeros(dim)
+    J5_score=-float("inf")
     #Initialize the positions of search agents
     Positions=numpy.random.uniform(0,1,(SearchAgents_no,dim)) *(ub-lb)+lb
     # print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
@@ -88,7 +93,7 @@ def GWO(objf,lb,ub,dim,SearchAgents_no,Max_iter,trainInput,trainOutput,net):
                 Worst_pos=Positions[i,:].copy()
         
         
-        a=2-l*((2)/Max_iter); # a decreases linearly fron 2 to 0
+        a=2-l*((2)/Max_iter); # a decreases linearly from 2 to 0
         # a = numpy.full((dim), a, dtype=float)
         # two = numpy.full((dim), 2, dtype=int)
         
@@ -102,42 +107,45 @@ def GWO(objf,lb,ub,dim,SearchAgents_no,Max_iter,trainInput,trainOutput,net):
             A1 = 2*a*r1-a
             C1 = 2*r2
 
-            D_alpha=abs(C1*Alpha_pos-Positions[i,:]); # Equation (3.5)-part 1
-            X1=Alpha_pos-A1*D_alpha; # Equation (3.6)-part 1
+            D_alpha=abs(C1*Alpha_pos-Positions[i,:]); 
+            X1=Alpha_pos-A1*D_alpha;
 
             r1 = numpy.random.rand(dim)
             r2 = numpy.random.rand(dim)
             
-            A2=2*a*r1-a; # Equation (3.3)
-            C2=2*r2; # Equation (3.4)
+            A2=2*a*r1-a; 
+            C2=2*r2;
             
-            D_beta=abs(C2*Beta_pos-Positions[i,:]); # Equation (3.5)-part 2
-            X2=Beta_pos-A2*D_beta; # Equation (3.6)-part 2
+            D_beta=abs(C2*Beta_pos-Positions[i,:]); 
+            X2=Beta_pos-A2*D_beta; 
 
             r1 = numpy.random.rand(dim)
             r2 = numpy.random.rand(dim)
 
-            A3=2*a*r1-a; # Equation (3.3)
-            C3=2*r2; # Equation (3.4)
+            A3=2*a*r1-a; 
+            C3=2*r2;
                 
-            D_delta=abs(C3*Delta_pos-Positions[i,:]); # Equation (3.5)-part 3
-            X3=Delta_pos-A3*D_delta; # Equation (3.5)-part 3
+            D_delta=abs(C3*Delta_pos-Positions[i,:]); 
+            X3=Delta_pos-A3*D_delta; 
 
             r1 = numpy.random.rand(dim)
             r2 = numpy.random.rand(dim)
 
-            A4=2*a*r1-a; # Equation (3.3)
-            C4=2*r2; # Equation (3.4)
+            A4=2*a*r1-a; 
+            C4=2*r2; 
 
             r1 = numpy.random.rand(dim)
             r2 = numpy.random.rand(dim)
 
-            D_worse=abs(r1*Worst_pos-Positions[i,:]); # Equation (3.5)-part 3
-            Xk=Worst_pos-A4*D_worse; # Equation (3.5)-part 3
+            D_worse=abs(r1*Worst_pos-Positions[i,:]); 
+            Xk=Worst_pos-A4*D_worse; 
+
+            Jk = X1 + r1*abs(Beta_pos - Worst_pos) + r2 * abs(Beta_pos - Worst_pos)
 
             # Jk = J + (r1+r2)(J+ - J-)
-            Xknew = X1 + r1*(X3-Worst_pos) + r2*(X3-Worst_pos)
-            Positions[i,:]=(X1+X2+X3+Xknew)/4  # Equation (3.7)
+            Xknew = Jk 
+            #X1 + r1*(X3-Worst_pos) + r2*(X3-Worst_pos)
+            Positions[i,:]=(X1+X2+X3+Xknew)/4  
             
 
 
@@ -146,11 +154,11 @@ def GWO(objf,lb,ub,dim,SearchAgents_no,Max_iter,trainInput,trainOutput,net):
             #     r1=random.random() # r1 is a random number in [0,1]
             #     r2=random.random() # r2 is a random number in [0,1]
                 
-            #     A1=2*a*r1-a; # Equation (3.3)
-            #     C1=2*r2; # Equation (3.4)
+            #     A1=2*a*r1-a; 
+            #     C1=2*r2; 
                 
-                # D_alpha=abs(C1*Alpha_pos[j]-Positions[i,j]); # Equation (3.5)-part 1
-                # X1=Alpha_pos[j]-A1*D_alpha; # Equation (3.6)-part 1
+                # D_alpha=abs(C1*Alpha_pos[j]-Positions[i,j]); 
+                # X1=Alpha_pos[j]-A1*D_alpha; 
                            
                 # r1=random.random()
                 # r2=random.random()
@@ -158,19 +166,19 @@ def GWO(objf,lb,ub,dim,SearchAgents_no,Max_iter,trainInput,trainOutput,net):
                 # A2=2*a*r1-a; # Equation (3.3)
                 # C2=2*r2; # Equation (3.4)
                 
-                # D_beta=abs(C2*Beta_pos[j]-Positions[i,j]); # Equation (3.5)-part 2
-                # X2=Beta_pos[j]-A2*D_beta; # Equation (3.6)-part 2       
+                # D_beta=abs(C2*Beta_pos[j]-Positions[i,j]); 
+                # X2=Beta_pos[j]-A2*D_beta;     
                 
             #     r1=random.random()
             #     r2=random.random() 
                 
-                # A3=2*a*r1-a; # Equation (3.3)
-                # C3=2*r2; # Equation (3.4)
+                # A3=2*a*r1-a; 
+                # C3=2*r2; 
                 
-                # D_delta=abs(C3*Delta_pos[j]-Positions[i,j]); # Equation (3.5)-part 3
-                # X3=Delta_pos[j]-A3*D_delta; # Equation (3.5)-part 3             
+                # D_delta=abs(C3*Delta_pos[j]-Positions[i,j]); 
+                # X3=Delta_pos[j]-A3*D_delta;             
                 
-                # Positions[i,j]=(X1+X2+X3)/3  # Equation (3.7)
+                # Positions[i,j]=(X1+X2+X3)/3 
                 
             
         
