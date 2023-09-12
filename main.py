@@ -46,7 +46,7 @@ def optimization(TrainFile, TestFile):
 
     # Select general parameters for all optimizers (population size, number of iterations)
     PopulationSize = 100
-    Iterations = 200
+    Iterations = 500
 
     # Export results ?
     Export = True
